@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Arte en Canvas</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: white; color: black; text-align: center; margin: 20px; }
+    h1 { margin-bottom: 30px; }
+    h2 { margin: 15px 0; }
+    canvas { border: 1px solid #ccc; margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>Arte en Canvas</h1>
+
+  <h2>Arte</h2>
+  <canvas id="staticCanvas" width="300" height="200"></canvas>
+
+  <h2>Animación básica</h2>
+  <canvas id="animCanvas" width="300" height="200"></canvas>
+
+  <script>
+    // =============== DIBUJO ESTÁTICO: PATO (solo rectángulos) =====================
+    const sCanvas = document.getElementById('staticCanvas');
+    const sCtx = sCanvas.getContext('2d');
+
+    function drawDuck() {
+      // Fondo blanco ya está por defecto
+
+      // Cuerpo
+      sCtx.fillStyle = 'yellow';
+      sCtx.fillRect(100, 100, 100, 50);
+
+      // Cabeza
+      sCtx.fillStyle = 'yellow';
+      sCtx.fillRect(70, 80, 50, 50);
+
+      // Pico
+      sCtx.fillStyle = 'orange';
+      sCtx.fillRect(50, 95, 20, 20);
+
+      // Ojo
+      sCtx.fillStyle = 'black';
+      sCtx.fillRect(85, 90, 10, 10);
+    }
+
+    drawDuck();
+
+    // ===================== ANIMACIÓN BÁSICA ================================
+    const aCanvas = document.getElementById('animCanvas');
+    const aCtx = aCanvas.getContext('2d');
+
+    let box = { x: 20, y: 20, size: 30, vx: 2, vy: 1.5 };
+
+    function drawFrame() {
+      const w = aCanvas.width, h = aCanvas.height;
+
+      // Fondo blanco
+      aCtx.fillStyle = 'white';
+      aCtx.fillRect(0, 0, w, h);
+
+      // Actualizar física simple
+      box.x += box.vx;
+      box.y += box.vy;
+
+      // Rebotes en los bordes
+      if (box.x <= 0 || box.x + box.size >= w) box.vx *= -1;
+      if (box.y <= 0 || box.y + box.size >= h) box.vy *= -1;
+
+      // Dibujar el rectángulo
+      aCtx.fillStyle = 'blue';
+      aCtx.fillRect(box.x, box.y, box.size, box.size);
+
+      requestAnimationFrame(drawFrame);
+    }
+
+    drawFrame();
+  </script>
+</body>
+</html>
