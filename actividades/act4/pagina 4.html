@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>reto imagen dvd</title>
+  <style>
+    /* Página limpia, fondo blanco */
+    html, body { height: 100%; margin: 0; background: #ffffff; font-family: "Courier New", Courier, monospace; }
+    .page { min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px; }
+
+    h1 { margin: 24px 0 8px 0; font-size: 28px; color: #111; }
+
+    /* Recuadro negro donde se moverá la imagen */
+    .stage {
+      width: 500px;
+      height: 300px;
+      background: #000;
+      border-radius: 6px;
+      position: relative;
+      overflow: hidden; /* importante: que la imagen no salga visualmente */
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+
+    /* La "imagen" es un SVG embebido para evitar dependencias externas. */
+    #dvdImg {
+      position: absolute;
+      width: 120px;    /* tamaño inicial */
+      height: 60px;
+      user-select: none;
+      pointer-events: none;
+      transform-origin: center center;
+    }
+
+    /* Responsividad: si la pantalla es pequeña, escala el stage */
+    @media (max-width: 560px) {
+      .stage { width: calc(100% - 40px); height: calc((100% - 40px) * 3 / 5); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <h1>reto imagen dvd</h1>
+    <div class="stage" id="stage">
+      <!-- Imagen embebida: look similar a un logo DVD -- usaré un SVG insertado directamente -->
+      <svg id="dvdImg" viewBox="0 0 240 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0" stop-color="#1e90ff" />
+            <stop offset="1" stop-color="#8a2be2" />
+          </linearGradient>
+          <filter id="f1" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5" />
+          </filter>
+        </defs>
+
+        <rect x="4" y="4" rx="14" ry="14" width="232" height="112" fill="url(#g1)" filter="url(#f1)" />
+        <text x="50%" y="62%" font-family="Courier New, Courier, monospace" font-weight="700" font-size="52" fill="#fff" text-anchor="middle" dominant-baseline="middle">DVD</text>
+      </svg>
+    </div>
+  </div>
+
+  <script>
+    // Selecciones
+    const stage = document.getElementById('stage');
+    const img = document.getElementById('dvdImg');
+
+    // Posición y velocidad (px / frame). Puedes ajustar la velocidad inicial aquí.
+    let x = 20; // posición inicial X (px)
+    let y = 20; // posición inicial Y (px)
+    let vx = 2.6; // velocidad en X
+    let vy = 1.9; // velocidad en Y
+
+    // Para rotar ligeramente cuando rebota (solo efecto visual)
+    let angle = 0;
+    let angleV = 0;
+
+    // Redimensionar la imagen en caso de que el contenedor cambie de tamaño
+    function updateBounds() {
+      const sRect = stage.getBoundingClientRect();
+      // tamaño actual de la imagen en píxeles
+      const iRect = img.getBoundingClientRect();
+      return {
+        stageW: Math.round(sRect.width),
+        stageH: Math.round(sRect.height),
+        imgW: Math.round(iRect.width),
+        imgH: Math.round(iRect.height)
+      };
+    }
+
+    // Función principal de animación
+    let lastTime = null;
+    function animate(time) {
+      if (!lastTime) lastTime = time;
+      const dt = Math.min((time - lastTime) / (1000/60), 4); // normaliza a frames y limita saltos grandes
+      lastTime = time;
+
+      const { stageW, stageH, imgW, imgH } = updateBounds();
+
+      // Actualiza posición con velocidad
+      x += vx * dt;
+      y += vy * dt;
+
+      // Colisiones: Si alcanza los bordes, invierte la velocidad en ese eje y ajusta la posición
+      let bounced = false;
+      if (x <= 0) {
+        x = 0;
+        vx = Math.abs(vx);
+        bounced = true;
+      } else if (x + imgW >= stageW) {
+        x = stageW - imgW;
+        vx = -Math.abs(vx);
+        bounced = true;
+      }
+
+      if (y <= 0) {
+        y = 0;
+        vy = Math.abs(vy);
+        bounced = true;
+      } else if (y + imgH >= stageH) {
+        y = stageH - imgH;
+        vy = -Math.abs(vy);
+        bounced = true;
+      }
+
+      // Si rebotó, aplica un pequeño cambio aleatorio para que la trayectoria varie
+      if (bounced) {
+        // ligero ajuste aleatorio a la velocidad (±10%) para evitar ciclos perfectos
+        const jitter = 0.92 + Math.random() * 0.16; // [0.92, 1.08]
+        vx *= jitter;
+        vy *= jitter;
+
+        // también cambia rotación de la imagen para efecto visual
+        angleV = (Math.random() - 0.5) * 0.6;
+      }
+
+      // Suaviza y aplica rotación
+      angle += angleV;
+      angleV *= 0.98;
+
+      // Aplica la transformación CSS a la imagen
+      img.style.transform = `translate(${x}px, ${y}px) rotate(${angle}deg)`;
+
+      // siguiente frame
+      requestAnimationFrame(animate);
+    }
+
+    // Inicia la animación cuando el DOM y estilos se hayan aplicado
+    window.addEventListener('load', () => {
+      // Centrar la imagen inicialmente (opcional)
+      const { stageW, stageH, imgW, imgH } = updateBounds();
+      x = Math.max(8, Math.round((stageW - imgW) * Math.random()));
+      y = Math.max(8, Math.round((stageH - imgH) * Math.random()));
+
+      requestAnimationFrame(animate);
+    });
+
+    // Si el usuario redimensiona la ventana, no queremos que la imagen quede fuera; ajustamos si es necesario
+    window.addEventListener('resize', () => {
+      const { stageW, stageH, imgW, imgH } = updateBounds();
+      if (x + imgW > stageW) x = Math.max(0, stageW - imgW);
+      if (y + imgH > stageH) y = Math.max(0, stageH - imgH);
+    });
+  </script>
+</body>
+</html>
