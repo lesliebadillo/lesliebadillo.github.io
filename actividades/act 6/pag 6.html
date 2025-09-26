@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Flecha Girando hacia el Mouse</title>
+  <style>
+    body {
+      margin: 0;
+      background: white;
+      overflow: hidden;
+    }
+    canvas {
+      display: block;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+
+<script>
+  const canvas = document.getElementById("canvas");
+  const context = canvas.getContext("2d");
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // Objeto flecha
+  const arrow = {
+    x: canvas.width / 2,
+    y: canvas.height / 2,
+    rotation: 0,
+    draw(ctx) {
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      ctx.rotate(this.rotation);
+      ctx.beginPath();
+      ctx.moveTo(20, 0);   // punta un poco más larga
+      ctx.lineTo(-20, -15); // más ancho (gordita)
+      ctx.lineTo(-8, 0);
+      ctx.lineTo(-20, 15); // más ancho (gordita)
+      ctx.closePath();
+      ctx.fillStyle = "#d4af37"; // amarillo mostaza
+      ctx.fill();
+      ctx.restore();
+    }
+  };
+
+  // Posición del mouse
+  const mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+
+  window.addEventListener("mousemove", function(e) {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+
+  (function drawFrame() {
+    requestAnimationFrame(drawFrame);
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    let dx = mouse.x - arrow.x;
+    let dy = mouse.y - arrow.y;
+
+    arrow.rotation = Math.atan2(dy, dx); // radianes
+    arrow.draw(context);
+  })();
+</script>
+</body>
+</html>
+
