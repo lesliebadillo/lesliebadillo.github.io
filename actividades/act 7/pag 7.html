@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Onda Senoidal Mario</title>
+  <style>
+    body {
+      margin: 0;
+      background: #3498db; /* 🔹 Azul de fondo de la página */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Canvas (recuadro más pequeño) */
+    .canvas {
+      position: relative;
+      width: 500px;   /* 🔹 Ancho del recuadro */
+      height: 300px;  /* 🔹 Alto del recuadro */
+      background-image: url("fondo mario.jpg"); /* 🔹 Inserta aquí tu fondo */
+      background-size: cover;
+      background-position: center bottom;
+      border: 4px solid #fff;
+      box-shadow: 0 0 15px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    /* Estrella */
+    .estrella {
+      position: absolute;
+      width: 80px;   /* 🔹 Tamaño de la estrella */
+      height: 80px;
+      background-image: url("star.png"); /* 🔹 Inserta aquí tu estrella */
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+  </style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="estrella" id="estrella"></div>
+  </div>
+
+  <script>
+    const estrella = document.getElementById("estrella");
+
+    // Parámetros del canvas
+    const canvasWidth = 500;
+    const canvasHeight = 300;
+
+    // Parámetros de la estrella
+    const estrellaWidth = 80;
+    const estrellaHeight = 80;
+
+    // Suelo calculado dinámicamente (altura del canvas - altura de la estrella)
+    const suelo = canvasHeight - estrellaHeight - 10; // 🔹 siempre pega en el piso
+    const salto = 60;        // Altura máxima del salto
+    const velocidadSalto = 0.03; // Velocidad del salto (más bajo = más lento) y tmb significa que mientras más pequeño = saltos más largos/ancho
+
+    // Movimiento horizontal
+    let x = 0;
+    let direction = 1;
+    const xspeed = 1.5; // mientras más grande el num = se mueve más rápido horizontalmente
+
+    // Ángulo para la función seno
+    let angle = 0;
+
+    function animar() {
+      // Movimiento senoidal desde el suelo
+      const y = suelo - Math.abs(Math.sin(angle) * salto);
+
+      // Movimiento horizontal con rebote en los lados
+      x += xspeed * direction;
+      if (x <= 0 || x + estrellaWidth >= canvasWidth) {
+        direction *= -1;
+      }
+
+      // Posición de la estrella
+      estrella.style.transform = `translate(${x}px, ${y}px)`;
+
+      // Avanza el ángulo
+      angle += velocidadSalto;
+
+      requestAnimationFrame(animar);
+    }
+
+    animar();
+  </script>
+</body>
+</html>
