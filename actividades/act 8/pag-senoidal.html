@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Bola con movimiento senoidal</title>
+  <style>
+    body {
+      background: #fff; /* Fondo blanco */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    canvas {
+      border: 1px solid #ccc; /* borde leve para diferenciar */
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas" width="600" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("canvas");
+    const context = canvas.getContext("2d");
+
+    // Variables de animación
+    let angle = 0;
+    let centerY = canvas.height / 2; // línea base
+    let range = 100;                 // amplitud del movimiento
+    let speed = 0.06;                // velocidad más lenta
+
+    // Objeto bola
+    const ball = {
+      x: canvas.width / 2,
+      y: centerY,
+      radius: 15,
+      color: "cyan", // verde-azulado
+      draw: function(ctx) {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+        ctx.fillStyle = this.color;
+        ctx.fill();
+      }
+    };
+
+    // Animación con onda senoidal
+    (function drawFrame() {
+      window.requestAnimationFrame(drawFrame, canvas);
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Movimiento senoidal en Y
+      ball.y = centerY + Math.sin(angle) * range;
+      angle += speed;
+
+      ball.draw(context);
+    }());
+  </script>
+</body>
+</html>
