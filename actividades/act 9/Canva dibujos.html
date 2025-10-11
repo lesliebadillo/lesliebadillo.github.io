@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Dibujando en Canvas</title>
+  <style>
+    body { text-align: center; background: #f5f5f5; font-family: sans-serif; }
+    canvas { background: #ffffff; border: 1px solid #000; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h2>Dibujos con Canvas</h2>
+  <canvas id="miCanvas" width="600" height="400"></canvas>
+
+  <script>
+    const c = document.getElementById("miCanvas");
+    const ctx = c.getContext("2d");
+
+    // === CASITA ===
+    ctx.fillStyle = "orange";
+    ctx.fillRect(50, 200, 100, 80); // cuerpo
+
+    ctx.beginPath(); // techo
+    ctx.moveTo(40, 200);
+    ctx.lineTo(100, 150);
+    ctx.lineTo(160, 200);
+    ctx.closePath();
+    ctx.fillStyle = "brown";
+    ctx.fill();
+    
+
+    ctx.fillStyle = "yellow"; // puerta
+    ctx.fillRect(90, 230, 30, 50);
+
+    // === HONGUITO ===
+    ctx.beginPath();
+    ctx.fillStyle = "red";
+    ctx.arc(270, 220, 40, Math.PI, 0); // sombrero
+    ctx.fill();
+    
+
+    ctx.fillStyle = "beige"; // tallo
+    ctx.fillRect(250, 220, 40, 50);
+
+    // === ESTRELLA ===
+    function dibujarEstrella(x, y, r) {
+      ctx.beginPath();
+      for (let i = 0; i < 5; i++) {
+        ctx.lineTo(
+          x + r * Math.cos((18 + i * 72) * Math.PI / 180),
+          y - r * Math.sin((18 + i * 72) * Math.PI / 180)
+        );
+        ctx.lineTo(
+          x + r/2 * Math.cos((54 + i * 72) * Math.PI / 180),
+          y - r/2 * Math.sin((54 + i * 72) * Math.PI / 180)
+        );
+      }
+      ctx.closePath();
+      ctx.fillStyle = "yellow";
+      ctx.fill();
+      
+    }
+    dibujarEstrella(450, 100, 30);
+
+    // === LUNA (dos círculos) ===
+    ctx.beginPath();
+    ctx.arc(520, 250, 40, 0, Math.PI * 2);
+    ctx.fillStyle = "lightgray";
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(540, 250, 40, 0, Math.PI * 2);
+    ctx.fillStyle = "white";
+    ctx.fill();
+
+    // === FLOR ===
+  function dibujarFlor(x, y, radioPetalo, colorPetalo) {
+    ctx.fillStyle = colorPetalo;
+    for (let i = 0; i < 10; i++) {
+      let ang = (Math.PI * 2 / 5) * i;
+      let px = x + Math.cos(ang) * 25;
+      let py = y + Math.sin(ang) * 25;
+      ctx.beginPath();
+      ctx.arc(px, py, radioPetalo, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // centro de la flor
+    ctx.beginPath();
+    ctx.arc(x, y, 15, 0, Math.PI * 2);
+    ctx.fillStyle = "yellow";
+    ctx.fill();
+
+  }
+
+  dibujarFlor(100, 100, 10, "pink");
+
+  </script>
+</body>
+</html>
