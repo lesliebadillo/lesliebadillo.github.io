@@ -1,0 +1,150 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Drawing App</title>
+    <style>
+        body {
+            text-align: center;
+            width: 100%;
+            background: linear-gradient(135deg, #4d72a5, #6a8fc9);
+            font-family: "Century Gothic", sans-serif;
+            margin: 0;
+            padding: 20px 0;
+            color: #fff;
+        }
+
+        h1 {
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        canvas {
+            background-color: white;
+            cursor: crosshair;
+            border-radius: 12px;
+        }
+
+        .container {
+            margin: 0 auto;
+            text-align: center;
+            width: 1000px;
+            max-width: 95%;
+        }
+
+        button {
+            width: 100px;
+            height: 45px;
+            margin: 6px;
+            border: none;
+            cursor: pointer;
+            font: 15px "Century Gothic", sans-serif;
+            color: white;
+            border-radius: 10px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        button:hover {
+            opacity: 0.8;
+            transform: scale(1.05);
+        }
+
+        /* Colores */
+        #red { background-color: #ff4d4d; }
+        #green { background-color: #32cd32; }
+        #blue { background-color: #1e90ff; }
+        #yellow { background-color: #ffeb3b; color: black; }
+        #purple { background-color: #8a2be2; }
+
+        /* Botón borrar */
+        #borrar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Grosor */
+        .grosor button {
+            background-color: #6e6e6e;
+            color: white;
+            width: 130px;
+        }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="container">
+        <h1>Dibuja a tu manera</h1>
+        <div class="colores">
+            <button id="red" type="button" value="#ff0000">Rojo</button>
+            <button id="green" type="button" value="#00ff00">Verde</button>
+            <button id="blue" type="button" value="#0000ff">Azul</button>
+            <button id="yellow" type="button" value="#ffff00">Amarillo</button>
+            <button id="purple" type="button" value="#800080">Morado</button>
+            <button id="borrar" type="button">Borrar todo</button>
+        </div>
+        <div class="grosor">
+            <button id="thin">Delgado</button>
+            <button id="medium">Medio</button>
+            <button id="thick">Grueso</button>
+        </div>
+        <canvas id="canvas" width="900" height="700"></canvas>
+    </div>
+
+    <script>
+      window.onload = function () {
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        let painting = false;
+
+        // Configuración inicial
+        context.lineWidth = 3;
+        context.strokeStyle = '#000000';
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
+
+        // Funciones del mouse
+        canvas.addEventListener('mousedown', (e) => {
+          painting = true;
+          context.beginPath();
+          context.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mouseup', () => {
+          painting = false;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+          if (!painting) return;
+          context.lineTo(e.offsetX, e.offsetY);
+          context.stroke();
+        });
+
+        // Selección de color
+        const colores = document.querySelector('.colores');
+        colores.addEventListener('click', (event) => {
+          if (event.target.value) {
+            context.strokeStyle = event.target.value;
+          }
+        });
+
+        // Borrar todo
+        const clearButton = document.getElementById('borrar');
+        clearButton.addEventListener('click', () => {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+        });
+
+        // Grosor del trazo
+        document.getElementById('thin').addEventListener('click', () => {
+          context.lineWidth = 2;
+        });
+        document.getElementById('medium').addEventListener('click', () => {
+          context.lineWidth = 5;
+        });
+        document.getElementById('thick').addEventListener('click', () => {
+          context.lineWidth = 10;
+        });
+      };
+    </script>
+  </body>
+</html>
