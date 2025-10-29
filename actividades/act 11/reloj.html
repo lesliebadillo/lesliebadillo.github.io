@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulación de Reloj</title>
+
+  <style>
+    /* ======== ESTILOS GENERALES ======== */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #f7f7f7;
+      margin: 0;
+    }
+
+    /* ======== CONTENEDOR DEL RELOJ ======== */
+    #contenedor-reloj {
+      position: relative;
+      width: 630px;
+      height: 630px;
+    }
+
+    /* Imagen del reloj (base) */
+    #reloj {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 630px;
+      height: 630px;
+      object-fit: contain;
+    }
+
+    /* ======== MANECILLAS ======== */
+    #horas, #minutos, #segundos {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 630px;
+      height: 630px;
+      object-fit: contain;
+      transform-origin: 50% 50%; /* 🔹 Gira desde el centro exacto */
+      transform: translate(-50%, -50%) rotate(0deg);
+      pointer-events: none; /* Evita seleccionar o interferir con clics */
+    }
+
+    /* Si el centro del pin de tus manecillas está más abajo,
+       cambia este valor, por ejemplo:
+       transform-origin: 50% 90%; */
+  </style>
+</head>
+
+<body>
+  <div id="contenedor-reloj">
+    <!-- Imagen base -->
+    <img id="reloj" src="reloj (1).png" alt="Fondo del reloj">
+
+    <!-- Manecillas individuales -->
+    <img id="horas" src="hora.png" alt="Manecilla de horas">
+    <img id="minutos" src="minutos.png" alt="Manecilla de minutos">
+    <img id="segundos" src="segundos.png" alt="Manecilla de segundos">
+  </div>
+
+  <script>
+    /* ============================
+       SIMULACIÓN DE RELOJ
+       ============================ */
+
+    // Velocidades de rotación (grados/segundo)
+    let vr1 = 2; // horas → 360° / (12h * 3600s)
+    let vr2 = 4;      // minutos → 360° / 3600s
+    let vr3 = 10;        // segundos → 360° / 60s
+
+    // Ángulos iniciales
+    let anguloHoras = 0;
+    let anguloMinutos = 0;
+    let anguloSegundos = 0;
+
+    function animarReloj() {
+      // Actualizar los ángulos
+      anguloHoras += vr1;
+      anguloMinutos += vr2;
+      anguloSegundos += vr3;
+
+      // Aplicar rotaciones
+      document.getElementById("horas").style.transform =
+        `translate(-50%, -50%) rotate(${anguloHoras}deg)`;
+
+      document.getElementById("minutos").style.transform =
+        `translate(-50%, -50%) rotate(${anguloMinutos}deg)`;
+
+      document.getElementById("segundos").style.transform =
+        `translate(-50%, -50%) rotate(${anguloSegundos}deg)`;
+
+      requestAnimationFrame(animarReloj);
+    }
+
+    animarReloj();
+  </script>
+</body>
+</html>
+
